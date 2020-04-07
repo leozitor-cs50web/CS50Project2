@@ -7,18 +7,62 @@
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
 
-    <title>Dashboard Template for Bootstrap</title>
+    <title>Flack Chat</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 
     <!-- Custom styles for this template -->
-<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+    <!-- JavaScript code -->
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+
+        // Look to see if user has been here before. If not, pop up modal.
+        if (!localStorage.getItem('username')) {
+            // Set up Modals (there is only one)
+            $('#exampleModalCenter').modal();
+
+        }
+
+      });
+
+      // javascript functions
+      function getName() {
+        const name = document.querySelector('#userName').value;
+        const userName = "Welcome ".concat(name);
+        document.querySelector('#user').innerHTML = userName;
+      }
+
+    </script>
+
   </head>
 
-  <body>
+  <body >
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Welcome to Flack Chat</h5>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="recipient-name" class="col-form-label"> Please Enter nickname: </label>
+              <input type="text" class="form-control" id="userName">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="getName()"> Let's Chat ! </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name</a>
+      <h5 id="user" class="navbar-brand col-sm-3 col-md-2 mr-0" >Welcome user</h5>
       <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
@@ -151,6 +195,8 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="../../assets/js/vendor/popper.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
     <script src="../../dist/js/bootstrap.min.js"></script>
 
     <!-- Icons -->
