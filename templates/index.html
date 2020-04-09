@@ -21,18 +21,21 @@
       document.addEventListener('DOMContentLoaded', function() {
 
         // Look to see if user has been here before. If not, pop up modal.
-        if (!localStorage.getItem('username')) {
+        if (!localStorage.getItem('userName')) {
             // Set up Modals (there is only one)
             $('#exampleModalCenter').modal();
-
+        }else {
+          const name = localStorage.getItem('userName');
+          document.querySelector('#user').innerHTML = name;
         }
 
       });
 
       // javascript functions
-      function getName() {
+      function getName() { // setting nickname of user name
         const name = document.querySelector('#userName').value;
-        const userName = "Welcome ".concat(name);
+        const userName = "Welcome  ".concat(name);
+        localStorage.setItem('userName', userName);
         document.querySelector('#user').innerHTML = userName;
       }
 
