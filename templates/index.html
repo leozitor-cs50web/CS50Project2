@@ -20,6 +20,41 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
 
+
+
+//MEXER abaixo AQUI
+
+        // Enable button only if there is text in the input field
+        document.querySelector('#channelInput').onkeyup = () => {
+        if (document.querySelector('#channelInput').value.length > 0)
+            document.querySelector('#channelCreate').disabled = false;
+        else
+            document.querySelector('#channelCreate').disabled = true;
+        };
+
+        document.querySelector('#channelCreate').onsubmit = () => {
+
+                    // Create new item for list
+                    document.createElement
+                    const li = document.createElement('li');
+                    li.innerHTML = document.querySelector('#task').value;
+
+                    // Add new item to task list
+                    document.querySelector('#tasks').append(li);
+
+                    // Clear input field
+                    document.querySelector('#task').value = '';
+
+                    // Stop form from submitting
+                    return false;
+                };
+
+
+// mexer acima daqui
+
+
+
+
         // Look to see if user has been here before. If not, pop up modal.
         if (!localStorage.getItem('userName')) {
             // Set up Modals (there is only one)
@@ -39,13 +74,15 @@
         document.querySelector('#user').innerHTML = userName;
       }
 
+
+
     </script>
 
   </head>
 
   <body >
     <!-- Modal -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="userNameModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -78,27 +115,29 @@
       <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
-            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-              <span>Create Channel</span>
-              <a class="d-flex align-items-center text-muted" href="#">
-                <input  type="text" name="" value="">
-                <span data-feather="plus-circle"></span>
-              </a>
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-4 mt-4 mb-1 text-muted">
+              <span style="font-size: 22px;">Create Channel</span>
             </h6>
+            <div class="align p-3 align-items-center">
+            <a class="d-flex justify-content-between align-items-center text-muted" href="#">
+              <input id="channelInput" style=" width:200px; height:30px" type="text" name="" value="">
+              <span id="channelCreate" style=" width:27px; height:27px;" data-feather="plus-circle"></span>
+            </a>
+            </div>
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="#">
-                  <span data-feather="hash"></span>
-                  Public Channels <span class="sr-only">(current)</span>
+                <a style="font-size: 22px;" class="nav-link active" href="#">
+                  <span style=" width:27px; height:27px;" data-feather="hash"></span>
+                  PUBLIC CHANNELS <span class="sr-only">(current)</span>
                 </a>
               </li>
             </ul>
 
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a class="nav-link active" href="#">
-                  <span data-feather="hash"></span>
-                  Online Users <span class="sr-only">(current)</span>
+                <a style="font-size: 22px; color:black;" class="nav-link active" href="#">
+                  <span style=" width:27px; height:27px; color:black;" data-feather="hash"></span>
+                  ONLINE USERS <span class="sr-only">(current)</span>
                 </a>
               </li>
             </ul>
