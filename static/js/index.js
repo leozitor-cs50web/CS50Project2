@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   socket.on('error', () =>{
-      alert('Sala já existe! tente outro nome');
+      alert('Room Name already exists! Choose another one!');
   });
 
 });
