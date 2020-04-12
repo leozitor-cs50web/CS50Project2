@@ -13,6 +13,7 @@ channels = ["# General"]
 # list of users
 users = set()
 
+
 @app.route("/")
 def index():
     return render_template("index.html", channels=channels)
