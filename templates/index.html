@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
@@ -18,53 +19,56 @@
     <!-- JavaScript code -->
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', () => {
 
+        // Connect to websocket
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
+        // When connected, configure buttons
+        socket.on('connect', () => {
 
-//MEXER abaixo AQUI
+          document.querySelector('#channelCreate').onclick = () => {
 
-        // Enable button only if there is text in the input field
-        document.querySelector('#channelInput').onkeyup = () => {
-        if (document.querySelector('#channelInput').value.length > 0)
-            document.querySelector('#channelCreate').disabled = false;
-        else
-            document.querySelector('#channelCreate').disabled = true;
-        };
+            // Create new item for list
+            if (document.querySelector('#channelInput').value.length > 0){
+              const channel = document.querySelector('#channelInput').value;
+              const channelSelection = "# ".concat(channel);
+              // Clear input field
+              document.querySelector('#channelInput').value = '';
+              socket.emit('create channel', channelSelection);
+            }
 
-        document.querySelector('#channelCreate').onsubmit = () => {
+            // Stop form from submitting
+            return false;
+          };
 
-                    // Create new item for list
-                    document.createElement
-                    const li = document.createElement('li');
-                    li.innerHTML = document.querySelector('#task').value;
+          // Look to see if user has been here before. If not, pop up modal.
+          if (!localStorage.getItem('userName')) {
+              // Set up Modals (there is only one)
+              $('#userNameModalCenter').modal();
+          }else {
+            const name = localStorage.getItem('userName');
+            document.querySelector('#user').innerHTML = name;
+          }
+        });
 
-                    // Add new item to task list
-                    document.querySelector('#tasks').append(li);
+        // anouncing channel creation
+        socket.on('announce channel creation', data => {
+          const li = document.createElement('li');
+          li.className = "nav-item"; // setting li as nav item
+          li.innerHTML = "<a style=\"font-size: 18px; color:black;\" class=\"nav-link active px-5\" href=\"#\"> " + data + " </a>"; // creating a tag
 
-                    // Clear input field
-                    document.querySelector('#task').value = '';
+          // Add new item to task list
+          document.querySelector('#channelsList').append(li);
 
-                    // Stop form from submitting
-                    return false;
-                };
+        });
 
-
-// mexer acima daqui
-
-
-
-
-        // Look to see if user has been here before. If not, pop up modal.
-        if (!localStorage.getItem('userName')) {
-            // Set up Modals (there is only one)
-            $('#exampleModalCenter').modal();
-        }else {
-          const name = localStorage.getItem('userName');
-          document.querySelector('#user').innerHTML = name;
-        }
+        socket.on('error', () =>{
+            alert('Sala já existe! tente outro nome');
+        });
 
       });
+
 
       // javascript functions
       function getName() { // setting nickname of user name
@@ -103,7 +107,7 @@
 
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
       <h5 id="user" class="navbar-brand col-sm-3 col-md-2 mr-0" >Welcome user</h5>
-      <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+      <h4 style="color:white;"> Flack Webchat</h4>
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
           <a class="nav-link" href="#">Sign out</a>
@@ -116,26 +120,31 @@
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-4 mt-4 mb-1 text-muted">
-              <span style="font-size: 22px;">Create Channel</span>
+              <span style="font-size: 20px;">Create Channel</span>
             </h6>
             <div class="align p-3 align-items-center">
             <a class="d-flex justify-content-between align-items-center text-muted" href="#">
-              <input id="channelInput" style=" width:200px; height:30px" type="text" name="" value="">
+              <input id="channelInput"  style="  width:200px; height:30px;" type="text" name="" value="">
               <span id="channelCreate" style=" width:27px; height:27px;" data-feather="plus-circle"></span>
             </a>
             </div>
-            <ul class="nav flex-column">
+            <ul id="channelsList" class="nav flex-column">
               <li class="nav-item">
-                <a style="font-size: 22px;" class="nav-link active" href="#">
+                <a style="font-size: 20px;" class="nav-link active" href="#">
                   <span style=" width:27px; height:27px;" data-feather="hash"></span>
                   PUBLIC CHANNELS <span class="sr-only">(current)</span>
                 </a>
               </li>
+              {% for channel in channels %}
+                <li class="nav-item ">
+                  <a style="font-size: 18px; color:black;" class="nav-link active px-5" href="#"> {{channel}}</a>
+                </li>
+              {% endfor %}
             </ul>
 
             <ul class="nav flex-column">
               <li class="nav-item">
-                <a style="font-size: 22px; color:black;" class="nav-link active" href="#">
+                <a style="font-size: 20px; color:black;" class="nav-link active" href="#">
                   <span style=" width:27px; height:27px; color:black;" data-feather="hash"></span>
                   ONLINE USERS <span class="sr-only">(current)</span>
                 </a>
@@ -145,20 +154,7 @@
         </nav>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Dashboard</h1>
-            <div class="btn-toolbar mb-2 mb-md-0">
-              <div class="btn-group mr-2">
-                <button class="btn btn-sm btn-outline-secondary">Share</button>
-                <button class="btn btn-sm btn-outline-secondary">Export</button>
-              </div>
-              <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
-                <span data-feather="calendar"></span>
-                This week
-              </button>
-            </div>
-          </div>
-          <ul class="list-group list-group-flush">
+          <ul id="ConversationList" class="list-group list-group-flush py-3">
             <li class="list-group-item">Cras justo odio</li>
             <li class="list-group-item">Dapibus ac facilisis in</li>
             <li class="list-group-item">Morbi leo risus</li>
@@ -173,14 +169,18 @@
             <li class="list-group-item">Vestibulum at eros</li>
             <li class="list-group-item">Vestibulum at eros</li>
             <li class="list-group-item">Vestibulum at eros</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+            <li class="list-group-item">Vestibulum at eros</li>
           </ul>
-          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-end pt-3 pb-2 mb-3">
-            <div class="input-group">
-              <textarea class="form-control" aria-label="With textarea"></textarea>
-            </div>
-          </div>
 
         </main>
+      </div>
+      <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-end pt-3 pb-2 mb-3">
+        <div class="input-group">
+          <textarea class="form-control" aria-label="With textarea"></textarea>
+        </div>
       </div>
     </div>
 
