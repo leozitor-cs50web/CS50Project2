@@ -1,58 +1,119 @@
-document.addEventListener('DOMContentLoaded', () => {
 
+document.addEventListener('DOMContentLoaded', () => {
+    // global var about last channel
+    var selectedChannel;
+    var userName;
     // Connect to websocket
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-
     // When connected, configure buttons
     socket.on('connect', () => {
-
+        //create channel Button
         document.querySelector('#channelCreate').onclick = () => {
-
-            // Create new item for list
+            // Create new item for channel list
             if (document.querySelector('#channelInput').value.length > 0) {
                 const channel = document.querySelector('#channelInput').value;
-                const channelSelection = "# ".concat(channel);
                 // Clear input field
                 document.querySelector('#channelInput').value = '';
-                socket.emit('create channel', channelSelection);
+                socket.emit('create channel', channel);
             }
-
             // Stop form from submitting
             return false;
         };
-
+        // Send button
+        document.querySelector('#sendBtn').onclick = () => {
+            if (document.querySelector('#textMessage').value.length > 0){
+                const message = document.querySelector('#textMessage').value;
+                //clear input field
+                document.querySelector('#textMessage').value = '';
+                socket.emit('send Message', message);
+            }
+            // stop form from submitting
+            return false;
+        }
         // Look to see if user has been here before. If not, pop up modal.
         if (!localStorage.getItem('userName')) {
             // Set up Modals (there is only one)
             $('#userNameModalCenter').modal();
-        } else {
-            const name = localStorage.getItem('userName');
-            document.querySelector('#user').innerHTML = name;
+            // when click modal button
+            document.querySelector('#modalBtn').onclick = () => {
+                userName = document.querySelector('#userName').value;
+                localStorage.setItem('userName', userName);
+                document.querySelector('#user').innerHTML = `Welcome ${userName}`;
+                socket.emit('add user', userName);
+            }
+        } else { // check the user already exists
+            userName = localStorage.getItem('userName');
+            document.querySelector('#user').innerHTML = `Welcome ${userName}`;
+            socket.emit('add user', userName);
+        }
+    });
+
+    socket.on('welcome user', user => {
+        debugger;
+        //resetting usersList and recreating first nav item
+        document.querySelector('#usersList').innerHTML = "";
+        document.querySelector('#usersList').append(createNav());
+        for ( i = 0; i<user.length; i++) {
+            document.querySelector('#usersList').append(createTag(user[i]));
+        }
+        if (!localStorage.getItem('selectedChannel')) {
+            selectedChannel = "General";
+            localStorage.setItem('selectedChannel', selectedChannel);
+        }else{
+            selectedChannel = localStorage.getItem('selectedChannel');
+        }
+        document.querySelector('#roomName').innerHTML = selectedChannel;
+        //socket.emit('user connected', selectedChannel);
+    });
+
+    //announce room messages
+    socket.on('announce messages',data =>{
+        for ( m = 0; m < data.length; m++) {
+            const li = document.createElement('li');
+            li.className = "list-group-item";
+            li.innerHTML = data[m];
+            document.querySelector('#conversationList').append(li);
+            console.log(data[m]);
         }
     });
 
     // anouncing channel creation
     socket.on('announce channel creation', data => {
-        const li = document.createElement('li');
-        li.className = "nav-item"; // setting li as nav item
-        li.innerHTML = "<a style=\"font-size: 18px; color:black;\" class=\"nav-link active px-5\" href=\"#\"> " + data + " </a>"; // creating a tag
-
         // Add new item to task list
-        document.querySelector('#channelsList').append(li);
+        document.querySelector('#channelsList').append(createTag(data));
+        selectedChannel = data;
 
     });
 
-    socket.on('error', () => {
+    socket.on('channelError', () => {
         alert('Room Name already exists! Choose another one!');
     });
 
 });
 
-
-// javascript functions
-function getName() { // setting nickname of user name
-    const name = document.querySelector('#userName').value;
-    const userName = "Welcome  ".concat(name);
-    localStorage.setItem('userName', userName);
-    document.querySelector('#user').innerHTML = userName;
+function createTag(data){
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    li.className = "nav-item"; // setting li as nav item
+    a.className = "nav-link active px-5" //  setting a as nav-link item
+    a.href = "#"
+    a.innerHTML = `# ${data}`;
+    li.appendChild(a);
+    return li
 }
+
+function createNav() {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    const span = document.createElement('span');
+    const svg = document.createElement('svg')
+    li.className = "nav-item"; // setting li as nav item
+    a.className = "nav-link active" //  setting a as nav-link item
+    a.href = "#"
+    a.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-hash\" style=\" width:27px; height:27px; color:black;\"><line x1=\"4\" y1=\"9\" x2=\"20\" y2=\"9\"></line><line x1=\"4\" y1=\"15\" x2=\"20\" y2=\"15\"></line><line x1=\"10\" y1=\"3\" x2=\"8\" y2=\"21\"></line><line x1=\"16\" y1=\"3\" x2=\"14\" y2=\"21\"></line></svg>\n" +
+        "                            ONLINE USERS <span class=\"sr-only\">(current)</span>";
+    a.style = "font-size: 20px; color:black;"
+    li.appendChild(a);
+    return li
+}
+

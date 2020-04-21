@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="getName()"> Let's Chat !
+                <button id="modalBtn" type="button" class="btn btn-primary" data-dismiss="modal"> Let's Chat !
                 </button>
             </div>
         </div>
@@ -57,17 +57,17 @@
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
             <div class="sidebar-sticky">
                 <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-4 mt-4 mb-1 text-muted">
-                    <span style="font-size: 20px;">Create Channel</span>
+                    <span  id="createChannelTag" class="createChannelName" >Create Channel</span>
                 </h6>
                 <div class="align p-3 align-items-center">
                     <a class="d-flex justify-content-between align-items-center text-muted" href="#">
-                        <input id="channelInput" style="  width:200px; height:30px;" type="text" name="" value="">
-                        <span id="channelCreate" style=" width:27px; height:27px;" data-feather="plus-circle"></span>
+                        <input id="channelInput" type="text" name="" value="">
+                        <span id="channelCreate" data-feather="plus-circle"></span>
                     </a>
                 </div>
                 <ul id="channelsList" class="nav flex-column">
                     <li class="nav-item">
-                        <a style="font-size: 20px;" class="nav-link active" href="#">
+                        <a  id="navLinkHead" class="nav-link active" href="#">
                             <span style=" width:27px; height:27px;" data-feather="hash"></span>
                             PUBLIC CHANNELS <span class="sr-only">(current)</span>
                         </a>
@@ -75,12 +75,12 @@
                     {% for channel in channels %}
                         <li class="nav-item ">
                             <a style="font-size: 18px; color:black;" class="nav-link active px-5"
-                               href="#"> {{ channel }}</a>
+                               href="#"> # {{ channel }}</a>
                         </li>
                     {% endfor %}
                 </ul>
 
-                <ul class="nav flex-column">
+                <ul id="usersList" class="nav flex-column">
                     <li class="nav-item">
                         <a style="font-size: 20px; color:black;" class="nav-link active" href="#">
                             <span style=" width:27px; height:27px; color:black;" data-feather="hash"></span>
@@ -92,37 +92,19 @@
         </nav>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-            <div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 border-bottom">
-                <h1 id="roomName" class="h2 text-center">Room Name</h1>
+            <div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 border-bottom">
+                <h1 id="roomName" class="text-center">Room Name</h1>
             </div>
-            <ul id="ConversationList" class="list-group list-group-flush">
-                <li class="list-group-item">Cras justo odio</li>
-                <li class="list-group-item">Dapibus ac facilisis in</li>
-                <li class="list-group-item">Morbi leo risus</li>
-                <li class="list-group-item">Porta ac consectetur ac</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
-                <li class="list-group-item">Vestibulum at eros</li>
+            <ul id="conversationList" class="list-group list-group-flush">
+                <li class="list-group-item"> message Teste</li>
             </ul>
-
+            <div class="input-group pt-3">
+                <textarea id="textMessage" class="form-control p-3" aria-label="With textarea"></textarea>
+                <button id="sendBtn" type="button" class="btn btn-primary btn-lg">SEND</button>
+            </div>
         </main>
     </div>
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-end pt-3 pb-2 mb-3">
-        <div class="input-group">
-            <textarea class="form-control" aria-label="With textarea"></textarea>
-        </div>
-    </div>
+
 </div>
 
 <!-- Bootstrap core JavaScript
@@ -131,8 +113,8 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
-<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-<script src="../../assets/js/vendor/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
 <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
