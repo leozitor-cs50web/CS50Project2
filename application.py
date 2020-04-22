@@ -88,12 +88,11 @@ def user_disconnect():
         users.pop(username)
         print("User {} Disconnected".format(username))
         print("User sid {}".format(id))
-        emit("user removed", username, broadcast=True)
+        emit("user removed", list(users), broadcast=True)
     else:
         print("User {} still exists".format(username))
         print("Only last connection {} was removed from sid list ".format(id))
     printAll()
-
 
 
 if __name__ == '__main__':

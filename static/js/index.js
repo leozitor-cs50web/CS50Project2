@@ -49,10 +49,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('welcome user', user => {
-        debugger;
         //resetting usersList and recreating first nav item
+        const itm = document.querySelector('#usersList').firstElementChild
         document.querySelector('#usersList').innerHTML = "";
-        document.querySelector('#usersList').append(createNav());
+        document.querySelector('#usersList').appendChild(itm);
+        // creating user list with the user array
         for ( i = 0; i<user.length; i++) {
             document.querySelector('#usersList').append(createTag(user[i]));
         }
@@ -64,6 +65,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         document.querySelector('#roomName').innerHTML = selectedChannel;
         //socket.emit('user connected', selectedChannel);
+    });
+
+    socket.on('user removed', user =>{
+        //resetting usersList and recreating first nav item
+        const itm = document.querySelector('#usersList').firstElementChild
+        document.querySelector('#usersList').innerHTML = "";
+        document.querySelector('#usersList').appendChild(itm);
+        // creating user list with the user array
+        for ( i = 0; i<user.length; i++) {
+            document.querySelector('#usersList').append(createTag(user[i]));
+        }
     });
 
     //announce room messages
@@ -102,18 +114,4 @@ function createTag(data){
     return li
 }
 
-function createNav() {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    const span = document.createElement('span');
-    const svg = document.createElement('svg')
-    li.className = "nav-item"; // setting li as nav item
-    a.className = "nav-link active" //  setting a as nav-link item
-    a.href = "#"
-    a.innerHTML = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"feather feather-hash\" style=\" width:27px; height:27px; color:black;\"><line x1=\"4\" y1=\"9\" x2=\"20\" y2=\"9\"></line><line x1=\"4\" y1=\"15\" x2=\"20\" y2=\"15\"></line><line x1=\"10\" y1=\"3\" x2=\"8\" y2=\"21\"></line><line x1=\"16\" y1=\"3\" x2=\"14\" y2=\"21\"></line></svg>\n" +
-        "                            ONLINE USERS <span class=\"sr-only\">(current)</span>";
-    a.style = "font-size: 20px; color:black;"
-    li.appendChild(a);
-    return li
-}
 
