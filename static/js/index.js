@@ -19,6 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Stop form from submitting
             return false;
         };
+        // PAREI AQUI! CONSEGUIR, RESOLVER LANCE DE SELECAO DO CANAL PARA MANDAR UM EVENTO PRO SERVIDOR
+        // Change Channel button
+        //document.querySelector('#channel').onclick = () =>{
+         //   $('#userNameModalCenter').modal();
+        //}
         // Send button
         document.querySelector('#sendBtn').onclick = () => {
             if (document.querySelector('#textMessage').value.length > 0){
@@ -57,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for ( i = 0; i<user.length; i++) {
             document.querySelector('#usersList').append(createTag(user[i]));
         }
+        //first time entering sets channel to General or recovers last channel
         if (!localStorage.getItem('selectedChannel')) {
             selectedChannel = "General";
             localStorage.setItem('selectedChannel', selectedChannel);
@@ -64,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedChannel = localStorage.getItem('selectedChannel');
         }
         document.querySelector('#roomName').innerHTML = selectedChannel;
-        //socket.emit('user connected', selectedChannel);
+        socket.emit('user connected', selectedChannel);
     });
 
     socket.on('user removed', user =>{
@@ -80,6 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //announce room messages
     socket.on('announce messages',data =>{
+        //clean all messages
+        document.querySelector('#conversationList').innerHTML = ""
+        // create room messages
         for ( m = 0; m < data.length; m++) {
             const li = document.createElement('li');
             li.className = "list-group-item";
@@ -110,6 +119,7 @@ function createTag(data){
     a.className = "nav-link active px-5" //  setting a as nav-link item
     a.href = "#"
     a.innerHTML = `# ${data}`;
+    a.id = 'channel';
     li.appendChild(a);
     return li
 }

@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, jsonify, render_template, request
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -9,7 +9,7 @@ socketio = SocketIO(app)
 # list of channels
 channels = ["General"]
 
-# list of users {"username": {"username":"Leozitor", "Channel":"canal"}}
+# list of users {"username": {"username":"Leozitor", "channel":"canal"}}
 users = {}
 
 users_sid = {}
@@ -49,7 +49,7 @@ def addUser(data):
     username = data
     # If not find user, adds to users dict
     if username not in users:
-        users[username] = {"username": username, "Channel": "General"}
+        users[username] = {"username": username, "channel": "General"}
         users_sid[request.sid] = username
         print("User {} Connected".format(users[username]))
         print("user sid {}".format(users_sid[request.sid]))
@@ -64,11 +64,17 @@ def addUser(data):
 
 
 @socketio.on("user connected")
-def userConnected(data):
+def userConnected(channel):
+    id = request.sid
+    users[users_sid[id]]["channel"] = channel
+    print("User sid {}".format(id))
+    print("User {} connected sending messages".format(users_sid[id]))
+    join_room(channel)
     #print("Data = {}".format(data))
     #print("Mensagens: {}".format(messages[data]))
-    #printAll()
-    emit("announce messages", messages[data], broadcast=True)
+    printAll()
+    emit("announce messages", messages[channel], broadcast=False)
+
 
 @socketio.on("create channel")
 def createChannel(data):
@@ -77,7 +83,9 @@ def createChannel(data):
     else:
         channels.append(data)  # appending to channels list
         messages[data] = []  # creating new message room to the dictionarie
+        printAll()
         emit("announce channel creation", data, broadcast=True)
+
 
 @socketio.on("disconnect")
 def user_disconnect():
