@@ -60,20 +60,24 @@ def addUser(data):
         print("user sid {}".format(request.sid))
         printAll()
 
-    emit("welcome user", list(users), broadcast=True)
+    emit("welcome user", {"usersList": list(users), "channelsList": channels}, broadcast=True)
 
 
 @socketio.on("user connected")
 def userConnected(channel):
-    id = request.sid
-    users[users_sid[id]]["channel"] = channel
-    print("User sid {}".format(id))
-    print("User {} connected sending messages".format(users_sid[id]))
-    join_room(channel)
-    #print("Data = {}".format(data))
-    #print("Mensagens: {}".format(messages[data]))
-    printAll()
-    emit("announce messages", messages[channel], broadcast=False)
+    # check if channel really exists if user was connected with the browser opened after server restart
+    if channel not in channels:
+        emit("reset channel", broadcast=False)
+    else:
+        id = request.sid
+        users[users_sid[id]]["channel"] = channel
+        print("User sid {}".format(id))
+        print("User {} connected sending messages".format(users_sid[id]))
+        join_room(channel)
+        #print("Data = {}".format(data))
+        #print("Mensagens: {}".format(messages[data]))
+        printAll()
+        emit("announce messages", messages[channel], broadcast=False)
 
 
 @socketio.on("create channel")

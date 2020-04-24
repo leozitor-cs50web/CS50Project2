@@ -48,15 +48,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    socket.on('welcome user', user => {
+    socket.on('welcome user', data => {
+        //debugger;
+        const users = data["usersList"];
+        const channels = data["channelsList"];
         //resetting usersList and recreating first nav item
-        const itm = document.querySelector('#usersList').firstElementChild
+        let itm = document.querySelector('#usersList').firstElementChild;
         document.querySelector('#usersList').innerHTML = "";
         document.querySelector('#usersList').appendChild(itm);
         // creating user list with the user array
-        for ( i = 0; i<user.length; i++) {
-            document.querySelector('#usersList').append(createUserTag(user[i]));
+        for ( i = 0; i<users.length; i++) {
+            document.querySelector('#usersList').append(createUserTag(users[i]));
         }
+        //resetting Channels list and recreating first nav item
+        itm = document.querySelector('#channelsList').firstElementChild;
+        document.querySelector('#channelsList').innerHTML = "";
+        document.querySelector('#channelsList').appendChild(itm);
+        // creating channels list with the channel array
+        for ( i = 0; i<channels.length; i++) {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            li.className = "nav-item"; // setting li as nav item
+            a.className = "nav-link active px-5" //  setting a as nav-link item
+            a.href = "#"
+            a.innerHTML = `# ${channels[i]}`;
+            //debugger;
+            const channelName = channels[i]
+            a.addEventListener('click', function () {
+                localStorage.setItem('selectedChannel', channelName);
+                document.querySelector('#roomName').innerHTML = channelName;
+                socket.emit('change channel', channelName);
+            });
+            li.appendChild(a);
+            document.querySelector('#channelsList').appendChild(li);
+        }
+
         //first time entering sets channel to General or recovers last channel
         if (!localStorage.getItem('selectedChannel')) {
             selectedChannel = "General";
@@ -70,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     socket.on('user removed', user =>{
         //resetting usersList and recreating first nav item
-        const itm = document.querySelector('#usersList').firstElementChild
+        const itm = document.querySelector('#usersList').firstElementChild;
         document.querySelector('#usersList').innerHTML = "";
         document.querySelector('#usersList').appendChild(itm);
         // creating user list with the user array
@@ -82,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //announce room messages
     socket.on('announce messages',data =>{
         //clean all messages
-        document.querySelector('#conversationList').innerHTML = ""
+        document.querySelector('#conversationList').innerHTML = "";
         // create room messages
         for ( m = 0; m < data.length; m++) {
             const li = document.createElement('li');
@@ -116,6 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('channelError', () => {
         alert('Room Name already exists! Choose another one!');
     });
+
+   socket.on('reset channel', () => {
+       //debugger;
+       //send user back to General channel
+        localStorage.setItem('selectedChannel', "General");
+        document.querySelector('#roomName').innerHTML = "General";
+        socket.emit('user connected', "General");
+   });
+
 });
 
 
