@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const message = document.querySelector('#textMessage').value;
                 //clear input field
                 document.querySelector('#textMessage').value = '';
-                socket.emit('send Message', message);
+                socket.emit('send message', {"message": message, "channel": selectedChannel});
             }
             // stop form from submitting
             return false;
@@ -139,10 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     });
 
-    socket.on('channelError', () => {
-        alert('Room Name already exists! Choose another one!');
-    });
-
    socket.on('reset channel', () => {
        //debugger;
        //send user back to General channel
@@ -150,6 +146,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#roomName').innerHTML = "General";
         socket.emit('user connected', "General");
    });
+
+    socket.on('channelError', () => {
+        alert('Room Name already exists! Choose another one!');
+    });
 
 });
 

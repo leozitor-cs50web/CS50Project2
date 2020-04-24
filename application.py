@@ -63,6 +63,20 @@ def addUser(data):
     emit("welcome user", {"usersList": list(users), "channelsList": channels}, broadcast=True)
 
 
+@socketio.on("send message")
+def sendMessage(data):
+    msg = data["message"]
+    channel = data["channel"]
+    if len(messages[channel]) >= roomMessageLimit:
+        messages[channel].append(msg)
+        messages[channel].pop(0)
+    else:
+        messages[channel].append(msg)
+    printAll()
+    emit("announce messages", messages[channel], room=channel)
+
+
+
 @socketio.on("user connected")
 def userConnected(channel):
     # check if channel really exists if user was connected with the browser opened after server restart
@@ -98,7 +112,6 @@ def changeChannel(channel):
     join_room(channel)
     printAll()
     emit("announce messages", messages[channel], broadcast=False)
-
 
 
 @socketio.on("disconnect")
