@@ -87,6 +87,16 @@ def createChannel(data):
         emit("announce channel creation", data, broadcast=True)
 
 
+@socketio.on("change channel")
+def changeChannel(channel):
+    id = request.sid
+    users[users_sid[id]]["channel"] = channel
+    join_room(channel)
+    printAll()
+    emit("announce messages", messages[channel], broadcast=False)
+
+
+
 @socketio.on("disconnect")
 def user_disconnect():
     # SID from user disconnected
@@ -102,6 +112,9 @@ def user_disconnect():
         print("Only last connection {} was removed from sid list ".format(id))
     printAll()
 
+@socketio.on("test")
+def test(data):
+    print("Deu CERTO----------------------------------------------------------------------")
 
 if __name__ == '__main__':
     socketio.run(app)

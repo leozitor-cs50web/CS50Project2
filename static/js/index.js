@@ -19,11 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Stop form from submitting
             return false;
         };
-        // PAREI AQUI! CONSEGUIR, RESOLVER LANCE DE SELECAO DO CANAL PARA MANDAR UM EVENTO PRO SERVIDOR
-        // Change Channel button
-        //document.querySelector('#channel').onclick = () =>{
-         //   $('#userNameModalCenter').modal();
-        //}
         // Send button
         document.querySelector('#sendBtn').onclick = () => {
             if (document.querySelector('#textMessage').value.length > 0){
@@ -60,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#usersList').appendChild(itm);
         // creating user list with the user array
         for ( i = 0; i<user.length; i++) {
-            document.querySelector('#usersList').append(createTag(user[i]));
+            document.querySelector('#usersList').append(createUserTag(user[i]));
         }
         //first time entering sets channel to General or recovers last channel
         if (!localStorage.getItem('selectedChannel')) {
@@ -80,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#usersList').appendChild(itm);
         // creating user list with the user array
         for ( i = 0; i<user.length; i++) {
-            document.querySelector('#usersList').append(createTag(user[i]));
+            document.querySelector('#usersList').append(createUserTag(user[i]));
         }
     });
 
@@ -101,7 +96,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // anouncing channel creation
     socket.on('announce channel creation', data => {
         // Add new item to task list
-        document.querySelector('#channelsList').append(createTag(data));
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        li.className = "nav-item"; // setting li as nav item
+        a.className = "nav-link active px-5" //  setting a as nav-link item
+        a.href = "#"
+        a.innerHTML = `# ${data}`;
+        a.onclick = function () {
+            localStorage.setItem('selectedChannel', data);
+            document.querySelector('#roomName').innerHTML = data;
+            socket.emit('change channel', data);
+        }
+        li.appendChild(a);
+        document.querySelector('#channelsList').append(li);
         selectedChannel = data;
 
     });
@@ -109,17 +116,16 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('channelError', () => {
         alert('Room Name already exists! Choose another one!');
     });
-
 });
 
-function createTag(data){
+
+function createUserTag(data){
     const li = document.createElement('li');
     const a = document.createElement('a');
     li.className = "nav-item"; // setting li as nav item
     a.className = "nav-link active px-5" //  setting a as nav-link item
     a.href = "#"
     a.innerHTML = `# ${data}`;
-    a.id = 'channel';
     li.appendChild(a);
     return li
 }
