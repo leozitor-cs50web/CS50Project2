@@ -24,11 +24,14 @@ private_messages = {}  # keys are the private rooms
 messages = {
     "General": []
 }
+
+#messages for debugg
 """
 messages = {
     "General": [{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"}]
 }"""
 
+# print for debug
 def printAll():
     print("Users List:")
     print(users)
@@ -50,7 +53,7 @@ def printAll():
 def sanitizeString(input):
     # sanitizing string removing what is not alphanumeric and upper the first letter
 
-    return normalize('NFKD', re.sub(r'[^a-zA-Z0-9 ]+', '', input)).encode('ASCII', 'ignore').decode('ASCII').title()
+    return normalize('NFKD', re.sub(r'[^a-zA-Z0-9 ]+', '', input)).encode('ASCII', 'ignore').decode('ASCII').lower().title()
 
 
 @app.route("/")
@@ -168,12 +171,6 @@ def user_disconnect():
         print("User {} still exists".format(username))
         print("Only last connection {} was removed from sid list ".format(id))
     printAll()
-
-
-@socketio.on("test")
-def test(data):
-    print("Deu CERTO----------------------------------------------------------------------")
-
 
 if __name__ == '__main__':
     socketio.run(app)
