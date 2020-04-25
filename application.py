@@ -24,6 +24,10 @@ private_messages = {}  # keys are the private rooms
 messages = {
     "General": []
 }
+"""
+messages = {
+    "General": [{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"},{"message": "teste message", "time": "20:30", "user": "usuario"}]
+}"""
 
 def printAll():
     print("Users List:")

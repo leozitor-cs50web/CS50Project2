@@ -48,7 +48,7 @@
     <h4 style="color:white;"> Flack Webchat</h4>
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-            <a class="nav-link" href="#">Sign out</a>
+            <a id="signout" class="nav-link" href="#">Sign out</a>
         </li>
     </ul>
 </nav>
@@ -90,14 +90,12 @@
             <div class="d-flex justify-content-center flex-wrap flex-md-nowrap align-items-center pt-4 pb-2 border-bottom">
                 <h1 id="roomName" class="text-center">Room Name</h1>
             </div>
-            <div>
-                <ul id="conversationList" class="list-group list-group-flush ">
-                    <li class="list-group-item"> message Teste</li>
-                </ul>
-            </div>
+            <ul id="conversationList" class="list-group list-group-flush overflow-auto">
+                <li class="list-group-item"> message Teste</li>
+            </ul>
         </main>
     </div>
-    <div class="row">
+    <div class="col-md-9 ml-sm-auto col-lg-10 px-4">
         <div class="input-group pt-3">
             <textarea id="textMessage" class="form-control p-3" aria-label="With textarea"></textarea>
             <button id="sendBtn" type="button" class="btn btn-primary btn-lg ml-4">SEND</button>
