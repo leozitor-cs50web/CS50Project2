@@ -40,7 +40,7 @@ b{
 .sidebar-sticky {
     position: relative;
     top: 0;
-    height: calc(100vh - 48px);
+    height: calc(100vh - 130px);
     padding-top: .5rem;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
@@ -93,6 +93,7 @@ b{
 
 [role="main"] {
     padding-top: 48px; /* Space for fixed navbar */
+    height: calc(100vh - 130px);
 }
 
 /*
