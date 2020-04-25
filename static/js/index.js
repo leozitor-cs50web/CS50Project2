@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const message = document.querySelector('#textMessage').value;
                 //clear input field
                 document.querySelector('#textMessage').value = '';
+                selectedChannel = localStorage.getItem('selectedChannel');
                 socket.emit('send message', {"message": message, "channel": selectedChannel});
             }
             // stop form from submitting
@@ -135,8 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         li.appendChild(a);
         document.querySelector('#channelsList').append(li);
-        selectedChannel = data;
-
     });
 
    socket.on('reset channel', () => {
@@ -144,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
        //send user back to General channel
         localStorage.setItem('selectedChannel', "General");
         document.querySelector('#roomName').innerHTML = "General";
+        selectedChannel = "General";
         socket.emit('user connected', "General");
    });
 

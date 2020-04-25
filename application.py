@@ -2,6 +2,8 @@ import os
 
 from flask import Flask, jsonify, render_template, request
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
+from unicodedata import normalize
+import re
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -36,17 +38,26 @@ def printAll():
     print("--------------------------")
     print("Message Rooms dict")
     print(messages)
-    print()
+    print("Rooms users are connected: ")
+    for i in users_sid:
+        print("User {} is connected in rooms: {}".format(users_sid[i], rooms(i)))
+    print("------------------------------------------------------------------------------")
+
+
+def sanitizeString(input):
+    # sanitizing string removing what is not alphanumeric and upper the first letter
+
+    return normalize('NFKD', re.sub(r'[^a-zA-Z0-9 ]+', '', input)).encode('ASCII', 'ignore').decode('ASCII').title()
 
 
 @app.route("/")
 def index():
-    return render_template("index.html", channels=channels, messages=messages)
+    return render_template("index.html")
 
 
 @socketio.on("add user")
 def addUser(data):
-    username = data
+    username = sanitizeString(data)
     # If not find user, adds to users dict
     if username not in users:
         users[username] = {"username": username, "channel": "General"}
@@ -72,6 +83,9 @@ def sendMessage(data):
         messages[channel].pop(0)
     else:
         messages[channel].append(msg)
+    print("mensagem {}".format(msg))
+    print("Channel {}".format(channel))
+    print("------------------------------------------------------------------------------")
     printAll()
     emit("announce messages", messages[channel], room=channel)
 
@@ -88,6 +102,7 @@ def userConnected(channel):
         print("User sid {}".format(id))
         print("User {} connected sending messages".format(users_sid[id]))
         join_room(channel)
+        print("User connected to a channel {}".format(channel))
         #print("Data = {}".format(data))
         #print("Mensagens: {}".format(messages[data]))
         printAll()
@@ -99,8 +114,9 @@ def createChannel(data):
     if data in channels:
         emit("channelError")
     else:
+        data = sanitizeString(data)
         channels.append(data)  # appending to channels list
-        messages[data] = []  # creating new message room to the dictionarie
+        messages[data] = []  # creating new message room to the dictionary
         printAll()
         emit("announce channel creation", data, broadcast=True)
 
@@ -109,7 +125,13 @@ def createChannel(data):
 def changeChannel(channel):
     id = request.sid
     users[users_sid[id]]["channel"] = channel
+    #leaving all channels before joining another one
+    rooms_connected = rooms(id)
+    for i in rooms_connected:
+        if i is not id:
+            leave_room(i)
     join_room(channel)
+    print("User connected to a channel {}".format(channel))
     printAll()
     emit("announce messages", messages[channel], broadcast=False)
 
