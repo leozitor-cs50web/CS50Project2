@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 //clear input field
                 document.querySelector('#textMessage').value = '';
                 selectedChannel = localStorage.getItem('selectedChannel');
-                socket.emit('send message', {"message": message, "channel": selectedChannel});
+                socket.emit('send message', {"message": message, "time": getTime(),"user": userName, "channel": selectedChannel});
             }
             // stop form from submitting
             return false;
@@ -112,11 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#conversationList').innerHTML = "";
         // create room messages
         for ( m = 0; m < data.length; m++) {
-            const li = document.createElement('li');
-            li.className = "list-group-item";
-            li.innerHTML = data[m];
-            document.querySelector('#conversationList').append(li);
-            console.log(data[m]);
+            const msg = data[m]["message"]
+            const user = data[m]["user"]
+            const ts = data[m]["time"]
+            document.querySelector('#conversationList').append(createMessage(user,msg,ts))
         }
     });
 
@@ -151,6 +150,50 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Room Name already exists! Choose another one!');
     });
 
+    function createMessage(user, msg, ts) {
+    const li = document.createElement('li')
+    const span = document.createElement('span')
+    const spn = document.createElement('span')
+    const b = document.createElement('b')
+    const p = document.createElement('p')
+    const div = document.createElement('div')
+    const div2 = document.createElement('div')
+    const a = document.createElement('a')
+    const button = document.createElement('button')
+    div.className = "d-flex justify-content-between"
+    div2.className = "d-flex justify-content-center"
+    li.className = "list-group-item"
+    span.className = "title"
+    spn.innerHTML = "&times;"
+    p.className = "text-break"
+    button.type = "button"
+    button.className = "close"
+    selectedChannel = localStorage.getItem('selectedChannel')
+        if (userName === user) {
+            button.addEventListener('click', function () {
+                socket.emit('remove message', {
+                    "channel": selectedChannel,
+                    "message": msg,
+                    "time": ts,
+                    "user": userName
+                })
+            });
+            button.appendChild(spn)
+
+        }
+    a.className = "mr-4"
+    b.innerHTML = user
+    p.innerHTML = msg
+    a.innerHTML = ts
+    div2.appendChild(a)
+    div2.appendChild(button)
+    span.appendChild(b)
+    div.appendChild(span)
+    div.appendChild(div2)
+    li.appendChild(div)
+    li.appendChild(p)
+    return li
+}
 });
 
 
@@ -163,6 +206,20 @@ function createUserTag(data){
     a.innerHTML = `# ${data}`;
     li.appendChild(a);
     return li
+}
+
+// function to create the element for the message
+
+// return the timestamp of the message
+function getTime() {
+    time = new Date()
+    day = time.getDate()
+    month = time.getMonth()
+    year = time.getFullYear()
+    hr = time.getHours()
+    min = time.getMinutes()
+
+    return hr + ":" + min + " " + month + "-" + day + "-" + year
 }
 
 

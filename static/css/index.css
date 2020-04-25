@@ -1,7 +1,13 @@
 body {
     font-size: .875rem;
 }
+p {
+  margin-bottom: 0rem;
+}
 
+b{
+  font-size: 18px;
+}
 .feather {
     width: 16px;
     height: 16px;

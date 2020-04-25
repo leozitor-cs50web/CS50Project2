@@ -12,7 +12,8 @@
     <title>Flack Chat</title>
 
     <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
@@ -94,7 +95,7 @@
             </ul>
             <div class="input-group pt-3">
                 <textarea id="textMessage" class="form-control p-3" aria-label="With textarea"></textarea>
-                <button id="sendBtn" type="button" class="btn btn-primary btn-lg">SEND</button>
+                <button id="sendBtn" type="button" class="btn btn-primary btn-lg ml-4">SEND</button>
             </div>
         </main>
     </div>

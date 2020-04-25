@@ -16,15 +16,14 @@ users = {}
 
 users_sid = {}
 
-
-#room message message limit
+# room message message limit
 roomMessageLimit = 100
 
 private_messages = {}  # keys are the private rooms
+# each message is "{message: "message", time: "hr:min", user: "userName}"
 messages = {
-    "General": ["mensagem 1", "mensagem 2", "mensagem 3", "mensagem 4", "mensagem 5", "mensagem 6", "mensagem 7"]
+    "General": []
 }
-
 
 def printAll():
     print("Users List:")
@@ -78,17 +77,18 @@ def addUser(data):
 def sendMessage(data):
     msg = data["message"]
     channel = data["channel"]
+    time = data["time"]
+    user = data["user"]
     if len(messages[channel]) >= roomMessageLimit:
-        messages[channel].append(msg)
+        messages[channel].append({"message": msg, "time": time, "user": user})
         messages[channel].pop(0)
     else:
-        messages[channel].append(msg)
+        messages[channel].append({"message": msg, "time": time, "user": user})
     print("mensagem {}".format(msg))
     print("Channel {}".format(channel))
     print("------------------------------------------------------------------------------")
     printAll()
     emit("announce messages", messages[channel], room=channel)
-
 
 
 @socketio.on("user connected")
@@ -97,24 +97,24 @@ def userConnected(channel):
     if channel not in channels:
         emit("reset channel", broadcast=False)
     else:
-        id = request.sid
-        users[users_sid[id]]["channel"] = channel
-        print("User sid {}".format(id))
-        print("User {} connected sending messages".format(users_sid[id]))
         join_room(channel)
+        users[users_sid[request.sid]]["channel"] = channel
+        print("User sid {}".format(id))
+        print("User {} connected sending messages".format(users_sid[request.sid]))
         print("User connected to a channel {}".format(channel))
-        #print("Data = {}".format(data))
-        #print("Mensagens: {}".format(messages[data]))
+        # print("Data = {}".format(data))
+        # print("Mensagens: {}".format(messages[data]))
         printAll()
         emit("announce messages", messages[channel], broadcast=False)
 
 
 @socketio.on("create channel")
 def createChannel(data):
+    data = sanitizeString(data)
+    # checking if no channel name was already taken
     if data in channels:
         emit("channelError")
     else:
-        data = sanitizeString(data)
         channels.append(data)  # appending to channels list
         messages[data] = []  # creating new message room to the dictionary
         printAll()
@@ -125,7 +125,7 @@ def createChannel(data):
 def changeChannel(channel):
     id = request.sid
     users[users_sid[id]]["channel"] = channel
-    #leaving all channels before joining another one
+    # leaving all channels before joining another one
     rooms_connected = rooms(id)
     for i in rooms_connected:
         if i is not id:
@@ -134,6 +134,20 @@ def changeChannel(channel):
     print("User connected to a channel {}".format(channel))
     printAll()
     emit("announce messages", messages[channel], broadcast=False)
+
+@socketio.on("remove message")
+def removeMessage(data):
+    channel = data["channel"]
+    msg = data["message"]
+    time = data["time"]
+    user = data["user"]
+    msgDict = {"message": msg, "time": time, "user": user}
+    for i in messages[channel]:
+        if i == msgDict:
+            messages[channel].remove(i)
+            break
+    printAll()
+    emit("announce messages", messages[channel], room=channel)
 
 
 @socketio.on("disconnect")
@@ -151,12 +165,11 @@ def user_disconnect():
         print("Only last connection {} was removed from sid list ".format(id))
     printAll()
 
+
 @socketio.on("test")
 def test(data):
     print("Deu CERTO----------------------------------------------------------------------")
 
+
 if __name__ == '__main__':
     socketio.run(app)
-
-
-
