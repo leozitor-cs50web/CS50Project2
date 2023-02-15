@@ -8,4 +8,4 @@ MarkupSafe==1.1.1
 python-engineio==3.12.1
 python-socketio==4.5.1
 six==1.14.0
-Werkzeug==0.16.0
+Werkzeug==2.2.3
